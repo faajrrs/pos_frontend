@@ -48,55 +48,31 @@ export default class Home extends Component {
   };
 
   masukKeranjang = (value) => {
-    axios
-      .get(`${API_URL}keranjangs?product.id=${value.id}`)
-      .then((res) => {
-        if (res.data.length === 0) {
-          const keranjang = {
-            jumlah: 1,
-            total_harga: value.harga,
-            product: value,
-            keterangan: "",
-          };
-          axios
-            .post(`${API_URL}keranjangs`, keranjang)
-            .then(() => {
-              swal({
-                title: "Masuk Keranjang",
-                text: `${keranjang.product.nama} ditambahkan ke keranjang`,
-                icon: "success",
-                button: false,
-                timer: 1500,
-              });
-              this.getKeranjangs();
-            })
-            .catch((err) => console.error(err));
-        } else {
-          const existing = res.data[0];
-          const updated = {
-            jumlah: existing.jumlah + 1,
-            total_harga: existing.total_harga + value.harga,
-            product: value,
-            keterangan: existing.keterangan || "",
-          };
-          axios
-            .put(`${API_URL}keranjangs/${existing.id}`, updated)
-            .then(() => {
-              swal({
-                title: "Masuk Keranjang",
-                text: `${updated.product.nama} ditambahkan ke keranjang`,
-                icon: "success",
-                button: false,
-                timer: 1500,
-              });
-              this.getKeranjangs();
-            })
-            .catch((err) => console.error(err));
-        }
-      })
-      .catch((err) => console.error(err));
-  };
+    const keranjangPayload = {
+      jumlah: 1, 
+      total_harga: value.harga,
+      product: value,
+      keterangan: "",
+    };
 
+    axios
+      .post(`${API_URL}keranjangs`, keranjangPayload)
+      .then(() => {
+        swal({
+          title: "Masuk Keranjang",
+          text: `${value.nama} berhasil ditambahkan/diperbarui`,
+          icon: "success",
+          button: false,
+          timer: 1500,
+        });
+        this.getKeranjangs(); 
+      })
+      .catch((err) => {
+        console.error("Gagal menambah/memperbarui keranjang:", err);
+        swal("Error", "Gagal menambahkan item ke keranjang", "error");
+      });
+  }; 
+  
   hapusItem = (item) => {
     axios
       .delete(`${API_URL}keranjangs/${item.id}`)
@@ -110,7 +86,38 @@ export default class Home extends Component {
         });
         this.getKeranjangs();
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+          const errorMessage = err.response 
+            ? err.response.data.message || `Server Error: ${err.response.status}`
+            : err.message;
+
+          console.error(`Gagal menghapus item ID ${item.id}:`, err.response || err);
+          
+          swal(
+              "Error Penghapusan", 
+              `Gagal menghapus item dari keranjang: ${errorMessage}`,
+              "error"
+          );
+      });
+  };
+
+  updateKeranjang = (keranjangId, payload) => {
+    axios
+      .put(`${API_URL}keranjangs/${keranjangId}`, payload)
+      .then(() => {
+        swal({
+          title: "Keranjang Diperbarui",
+          text: `Item berhasil diperbarui`,
+          icon: "success",
+          button: false,
+          timer: 1500,
+        });
+        this.getKeranjangs(); 
+      })
+      .catch((err) => {
+        console.error("Gagal memperbarui keranjang:", err.response || err);
+        swal("Error", "Gagal memperbarui item keranjang", "error");
+      });
   };
 
   render() {
@@ -145,6 +152,7 @@ export default class Home extends Component {
               hapusItem={this.hapusItem}
               clearCart={this.clearCart}
               refreshKeranjang={this.getKeranjangs}
+              updateKeranjang={this.updateKeranjang}
             />
           </Col>
         </Row>
