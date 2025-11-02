@@ -49,7 +49,7 @@ export default class Home extends Component {
 
   masukKeranjang = (value) => {
     const keranjangPayload = {
-      jumlah: 1, 
+      jumlah: 1,
       total_harga: value.harga,
       product: value,
       keterangan: "",
@@ -65,14 +65,14 @@ export default class Home extends Component {
           button: false,
           timer: 1500,
         });
-        this.getKeranjangs(); 
+        this.getKeranjangs();
       })
       .catch((err) => {
         console.error("Gagal menambah/memperbarui keranjang:", err);
         swal("Error", "Gagal menambahkan item ke keranjang", "error");
       });
-  }; 
-  
+  };
+
   hapusItem = (item) => {
     axios
       .delete(`${API_URL}keranjangs/${item.id}`)
@@ -87,17 +87,20 @@ export default class Home extends Component {
         this.getKeranjangs();
       })
       .catch((err) => {
-          const errorMessage = err.response 
-            ? err.response.data.message || `Server Error: ${err.response.status}`
-            : err.message;
+        const errorMessage = err.response
+          ? err.response.data.message || `Server Error: ${err.response.status}`
+          : err.message;
 
-          console.error(`Gagal menghapus item ID ${item.id}:`, err.response || err);
-          
-          swal(
-              "Error Penghapusan", 
-              `Gagal menghapus item dari keranjang: ${errorMessage}`,
-              "error"
-          );
+        console.error(
+          `Gagal menghapus item ID ${item.id}:`,
+          err.response || err
+        );
+
+        swal(
+          "Error Penghapusan",
+          `Gagal menghapus item dari keranjang: ${errorMessage}`,
+          "error"
+        );
       });
   };
 
@@ -112,7 +115,7 @@ export default class Home extends Component {
           button: false,
           timer: 1500,
         });
-        this.getKeranjangs(); 
+        this.getKeranjangs();
       })
       .catch((err) => {
         console.error("Gagal memperbarui keranjang:", err.response || err);

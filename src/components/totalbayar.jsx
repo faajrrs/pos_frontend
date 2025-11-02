@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Button, Row, Col } from "react-bootstrap";
 import { numberWithCommas } from "../utils/utils";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { API_URL } from "../utils/constant";
 import { useNavigate } from "react-router-dom";
